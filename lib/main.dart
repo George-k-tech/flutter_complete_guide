@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './result.dart';
 
 // void main(){
 // runApp(MyApp());
@@ -10,36 +10,62 @@ void main() => runApp(MyApp());
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _MyAppState();
   }
 }
 
 class _MyAppState extends State<MyApp> {
-  final questions = const [
+  final _questions = const [
     {
       'questionText': 'what\'s your favorite color',
-      'answers': ['Black', 'Red', 'Green', 'White'],
+      'answers': [
+        {'text': 'Black', 'score:': 10},
+        {'text': 'Red', 'score': 20},
+        {'text': 'Green', 'score': 30},
+        {'text': 'White', 'score': 40},
+      ],
     },
     {
       'questionText': 'whats\'s your favorite animal',
-      'answers': ['Rabbit', 'Snake', 'Dog', 'Cat'],
+      'answers': [
+        {'text': 'Rabit', 'score:': 10},
+        {'text': 'Dog', 'score': 20},
+        {'text': 'Cat', 'score': 30},
+        {'text': 'Bull', 'score': 40},
+      ],
     },
     {
       'questionText': 'whats\'s your favorite language',
-      'answers': ['PHP', 'HTML', 'Flutter', 'Java'],
+      'answers': [
+        {'text': 'PHP', 'score:': 10},
+        {'text': 'HTML', 'score': 20},
+        {'text': 'JAVA', 'score': 30},
+        {'text': 'FLUTTER', 'score': 40},
+      ],
     },
   ];
 
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  void _answerQuestions() {
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
+  }
+
+  void _answerQuestions(int score) {
+    _totalScore = _totalScore + score;
+
     setState(() {
       _questionIndex = _questionIndex + 1;
     });
     print(_questionIndex);
-     if (_questionIndex < questions.length) {
+    if (_questionIndex < _questions.length) {
       print('we have more question');
+    } else {
+      print('No more questions');
     }
   }
 
@@ -50,17 +76,13 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('My first app'),
         ),
-        body: Column(
-          children: [
-            Question(
-              questions[_questionIndex]['questionText'],
-            ),
-            ...(questions[_questionIndex]['answers'] as List<String>)
-                .map((answer) {
-              return Answer(_answerQuestions, answer);
-            }).toList()
-          ],
-        ),
+        body: _questionIndex < _questions.length
+            ? Quiz(
+                answerQuestion: _answerQuestions,
+                questionIndex: _questionIndex,
+                questions: _questions,
+              )
+            : Result(_totalScore, _resetQuiz),
       ),
     );
   }
